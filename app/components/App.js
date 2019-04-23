@@ -32,17 +32,34 @@ function blockInSnake(i, j, snake) {
   return false;
 }
 
+function choosePill(snake) {
+outerLoop:
+  while (true) {
+    var x = Math.floor(Math.random() * numBlocks);
+    var y = Math.floor(Math.random() * numBlocks);
+
+    for (var i = 0; i < snake.length; i++) {
+      if (snake[i][0] == x && snake[i][1] == y) {
+        continue outerLoop
+      }
+    }
+
+    return [x,y];
+  }
+}
+
 
 class App extends React.Component {
   constructor(props) {
     super(props);
 
+    var initSnake = [[0, 1], [0, 2], [0, 3]];
 
     this.state = {
       selectedLanguage: 'All',
       grid: getGreyGrid(numBlocks),
-      snake: [[0, 1], [0, 2], [0, 3]],
-
+      snake: initSnake,
+      pill: choosePill(initSnake),
       dir: "ArrowRight",
     };
 
@@ -125,6 +142,7 @@ class App extends React.Component {
                   return <div key={j} style={
                     {'height': '20px', 'width': '20px', background: (
                       /* mirror flip here, & j off by numBlocks */
+                      //getBlockColor(j-numBlocks, i, val, this.state.snake))}}
                       blockInSnake(j-numBlocks, i, this.state.snake)) ?
                         'rgb(250,200,50)' : blueString(val/2)}}> 
                 </div>})}
@@ -136,6 +154,18 @@ class App extends React.Component {
   }
 
 }
+
+function getBlockColor(i, j, gridVal, snake) {
+  if (blockInSnake(i, j, snake)) {
+    return 'rgb(250,200,50';
+  } else {
+    return blueString(gridVal/2);
+  }
+
+}
+
+
+
 
 
 
