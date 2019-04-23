@@ -53,7 +53,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
 
-    var initSnake = [[0, 1], [0, 2], [0, 3]];
+    var initSnake = [[2, 0], [1, 0], [0, 0]];
 
     this.state = {
       selectedLanguage: 'All',
@@ -114,10 +114,20 @@ class App extends React.Component {
 
         var next = [oldx, oldy];
         var cloneSnake = [...this.state.snake];
-        cloneSnake.pop();
 
-        return {
-          snake: [next].concat(cloneSnake),
+
+        // if head of snake intersects pill
+        if (next[0] == this.state.pill[0] && next[1] == this.state.pill[1]) {
+          var nextSnake = [next].concat(cloneSnake);
+          return {
+            snake: nextSnake,
+            pill: choosePill(nextSnake),
+          }
+        } else {
+          cloneSnake.pop();
+          return {
+            snake: [next].concat(cloneSnake),
+          }
         }
       });
   }
@@ -137,14 +147,13 @@ class App extends React.Component {
         tabIndex={-1} onKeyDown={this.handleKey} autoFocus="true">    
        <div> 
             {this.state.grid.map((row, i) => {
-              return (<div key={i} style={{display: 'flex'}}> 
+              return (<div ikey={i} key={i} style={{display: 'flex'}}> 
                 {row.map((val, j) => {
-                  return <div key={j} style={
+                  return <div jkey={j} key={j} style={
                     {'height': '20px', 'width': '20px', background: (
                       /* mirror flip here, & j off by numBlocks */
-                      //getBlockColor(j-numBlocks, i, val, this.state.snake))}}
-                      blockInSnake(j-numBlocks, i, this.state.snake)) ?
-                        'rgb(250,200,50)' : blueString(val/2)}}> 
+                      getBlockColor(j-numBlocks, i, val, 
+                        this.state.snake, this.state.pill))}}>
                 </div>})}
               </div>);
             })}
@@ -155,11 +164,15 @@ class App extends React.Component {
 
 }
 
-function getBlockColor(i, j, gridVal, snake) {
+function getBlockColor(i, j, gridVal, snake, pill) {
   if (blockInSnake(i, j, snake)) {
-    return 'rgb(250,200,50';
+    return 'rgb(250,200,50)';
   } else {
-    return blueString(gridVal/2);
+    if (pill[0] == i && pill[1] == j) {
+      return 'rgb(255,255,255)';
+    } else {
+      return blueString(gridVal/2);
+    }
   }
 
 }
