@@ -22,7 +22,8 @@ function getGreyGrid(numBlocks) {
 
 class App extends React.Component {
   constructor(props) {
-    super();
+    super(props);
+
 
     this.state = {
       selectedLanguage: 'All',
@@ -34,13 +35,20 @@ class App extends React.Component {
 
     this.tick = this.tick.bind(this);
     this.handleKey = this.handleKey.bind(this);
+
+    this.myRef = React.createRef();
+    this.applyFocus = this.applyFocus.bind(this);
   }
 
 
   componentDidMount() {
-    this.timer = setInterval(this.tick, 100);
+    this.timer = setInterval(this.tick, 75);
+    this.applyFocus();
   }
 
+  applyFocus() {
+    this.myRef.current.focus();
+  }
 
   tick() {
       this.setState( () => {
@@ -90,7 +98,8 @@ class App extends React.Component {
 
   render() {
     return (
-      <div style={{outline: 0}} tabIndex={-1} onKeyDown={this.handleKey}>    
+      <div style={{outline:50}} ref={this.myRef} 
+        tabIndex={-1} onKeyDown={this.handleKey} autoFocus="true">    
        <div> 
             {this.state.grid.map((row, i) => {
               return (<div key={i} style={{display: 'flex'}}> 
