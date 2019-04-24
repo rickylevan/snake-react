@@ -1,0 +1,9 @@
+--Improve aesthetics of game
+--If connected to internet, prompt for username and password in pretty interrupt window
+--Show top high scores all time
+--Show user's current score and the user's personal highest score of all time
+
+--Have a simple golang (w/ sql) server running in the cloud (or be cocky w no DB???)
+--Server and client both able to async push events, so I think... Websockets!
+	-- for example, someone getting a new high score can push immediately to everyone
+	-- who is playing the game
