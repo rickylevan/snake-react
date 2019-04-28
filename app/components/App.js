@@ -1,7 +1,7 @@
-var React = require('react');
+const React = require('react');
 
-var numShades = 150;
-var numBlocks = 30;
+const numShades = 150;
+const numBlocks = 30;
 
 function greyString(c) {
   return 'rgb(' + c + ',' + c + ',' + c + ')'
@@ -12,10 +12,10 @@ function blueString(c) {
 }
 
 function getGreyGrid(numBlocks) {
-    var squareShades = [];
-    for (var i = 0; i < numBlocks; i++) {
-      var next = new Array(numBlocks)
-      for (var j = 0; j < numBlocks; j++) {
+    const squareShades = [];
+    for (let i = 0; i < numBlocks; i++) {
+      const next = new Array(numBlocks)
+      for (let j = 0; j < numBlocks; j++) {
         next.push(Math.floor(Math.random()*256));
       }
       squareShades.push(next);
@@ -24,7 +24,7 @@ function getGreyGrid(numBlocks) {
 }
 
 function blockInSnake(i, j, snake) {
-  for (var p = 0; p < snake.length; p++) {
+  for (let p = 0; p < snake.length; p++) {
     if ((snake[p][0] == i) && (snake[p][1] == j)) {
       return true;
     }
@@ -35,10 +35,10 @@ function blockInSnake(i, j, snake) {
 function choosePill(snake) {
 outerLoop:
   while (true) {
-    var x = Math.floor(Math.random() * numBlocks);
-    var y = Math.floor(Math.random() * numBlocks);
+    const x = Math.floor(Math.random() * numBlocks);
+    const y = Math.floor(Math.random() * numBlocks);
 
-    for (var i = 0; i < snake.length; i++) {
+    for (let i = 0; i < snake.length; i++) {
       if (snake[i][0] == x && snake[i][1] == y) {
         continue outerLoop
       }
@@ -49,8 +49,8 @@ outerLoop:
 }
 
 function selfIntersect(snake) {
-  for (var i = 0; i < snake.length; i++) {
-    for (var j = i+1; j < snake.length; j++) {
+  for (let i = 0; i < snake.length; i++) {
+    for (let j = i+1; j < snake.length; j++) {
       if (snake[i][0] == snake[j][0] &&
         snake[i][1] == snake[j][1]) {
         return true;
@@ -65,7 +65,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
 
-    var initSnake = [[2, 0], [1, 0], [0, 0]];
+    const initSnake = [[2, 0], [1, 0], [0, 0]];
 
     this.state = {
       grid: getGreyGrid(numBlocks),
@@ -99,8 +99,8 @@ class App extends React.Component {
     if (this.state.fail) {
       return;
     }
-    var oldx = this.state.snake[0][0];
-    var oldy = this.state.snake[0][1];
+    let oldx = this.state.snake[0][0];
+    let oldy = this.state.snake[0][1];
 
     // alas, (old + 1) % numBlocks fails cuz JS '%' is messed up
     if (this.state.dir == "ArrowDown") {
@@ -127,8 +127,8 @@ class App extends React.Component {
       }
     }
 
-    var next = [oldx, oldy];
-    var cloneSnake = [...this.state.snake];
+    const next = [oldx, oldy];
+    const cloneSnake = [...this.state.snake];
 
       this.setState( () => {
 
@@ -145,7 +145,7 @@ class App extends React.Component {
 
         // if head of snake intersects pill
         if (next[0] == this.state.pill[0] && next[1] == this.state.pill[1]) {
-          var nextSnake = [next].concat(cloneSnake);
+          const nextSnake = [next].concat(cloneSnake);
           return {
             snake: nextSnake,
             pill: choosePill(nextSnake),
