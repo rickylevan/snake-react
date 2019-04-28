@@ -60,29 +60,7 @@ function selfIntersect(snake) {
   return false;
 }
 
-function initWebSocket() {
-    let socket = new WebSocket("ws://localhost:8080/ws");
-    console.log("Attempting websocket connection");
 
-    socket.onopen = () => {
-      console.log("Successfully Connected");
-      socket.send("Snake game says hi!");
-    }
-
-    socket.onclose = (event) => {
-      console.log("Socket closed connection: ", event)
-    }
-
-    socket.onmessage = (msg) => {
-      console.log(msg)
-    }
-
-    socket.onerror = (error) => {
-      console.log("Socket Error: ", error);
-    }
-
-    return socket;
-}
 
 
 
@@ -101,10 +79,12 @@ class App extends React.Component {
       pill: choosePill(initSnake),
       fail: false,
       dir: "ArrowRight",
+      malone: ""
     };
 
     this.tick = this.tick.bind(this);
     this.handleKey = this.handleKey.bind(this);
+    this.initWebSocket = this.initWebSocket.bind(this);
 
     // refs for the win to autofocus the game, instead of having to click
     // into the div for enable keystrokes
@@ -117,12 +97,43 @@ class App extends React.Component {
     this.timer = setInterval(this.tick, 75);
     this.applyFocus();
 
-    this.socket = initWebSocket()
+    this.socket = this.initWebSocket()
   }
 
   applyFocus() {
     this.myRef.current.focus();
   }
+
+
+  initWebSocket() {
+    let socket = new WebSocket("ws://localhost:8080/ws");
+    console.log("Attempting websocket connection");
+
+    socket.onopen = () => {
+      console.log("Successfully Connected");
+      socket.send("Snake game says hi!");
+    }
+
+    socket.onclose = (event) => {
+      console.log("Socket closed connection: ", event)
+    }
+
+    socket.onmessage = (msg) => {
+      this.setState( () => {
+        return {
+          malone: msg.data
+        }
+      })
+    }
+
+    socket.onerror = (error) => {
+      console.log("Socket Error: ", error);
+    }
+
+    return socket;
+  }
+
+
 
   tick() {
     // do nothing if we've already lost
@@ -211,6 +222,7 @@ class App extends React.Component {
             })}
         </div>
         <div> Your current score is: {this.state.snake.length} </div>
+        <div> {this.state.malone} </div>
       </div>
     )
   }
