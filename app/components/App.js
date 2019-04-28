@@ -60,6 +60,34 @@ function selfIntersect(snake) {
   return false;
 }
 
+function initWebSocket() {
+    let socket = new WebSocket("ws://localhost:8080/ws");
+    console.log("Attempting websocket connection");
+
+    socket.onopen = () => {
+      console.log("Successfully Connected");
+      socket.send("Snake game says hi!");
+    }
+
+    socket.onclose = (event) => {
+      console.log("Socket closed connection: ", event)
+    }
+
+    socket.onmessage = (msg) => {
+      console.log(msg)
+    }
+
+    socket.onerror = (error) => {
+      console.log("Socket Error: ", error);
+    }
+
+    return socket;
+}
+
+
+
+
+
 
 class App extends React.Component {
   constructor(props) {
@@ -88,6 +116,8 @@ class App extends React.Component {
   componentDidMount() {
     this.timer = setInterval(this.tick, 75);
     this.applyFocus();
+
+    this.socket = initWebSocket()
   }
 
   applyFocus() {
