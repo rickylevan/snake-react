@@ -68,7 +68,6 @@ class App extends React.Component {
     var initSnake = [[2, 0], [1, 0], [0, 0]];
 
     this.state = {
-      selectedLanguage: 'All',
       grid: getGreyGrid(numBlocks),
       snake: initSnake,
       pill: choosePill(initSnake),
@@ -186,6 +185,7 @@ class App extends React.Component {
               </div>);
             })}
         </div>
+        <div> Your current score is: {this.state.snake.length} </div>
       </div>
     )
   }
