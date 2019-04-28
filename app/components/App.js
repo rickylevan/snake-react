@@ -171,28 +171,37 @@ class App extends React.Component {
     const next = [oldx, oldy];
     const cloneSnake = [...this.state.snake];
 
-    this.setState( () => {
       // if game ends with self-intersection
       if (selfIntersect([next].concat(cloneSnake))) {
-        return {
-          fail: true,
-          snake: [next].concat(cloneSnake),
-        }
+        this.setState( () => {
+          return {
+            fail: true,
+            snake: [next].concat(cloneSnake),
+          }
+        });
       }
+
       // if head of snake intersects pill
       if (next[0] == this.state.pill[0] && next[1] == this.state.pill[1]) {
         const nextSnake = [next].concat(cloneSnake);
-        return {
-          snake: nextSnake,
-          pill: choosePill(nextSnake),
-        }
+
+        this.socket.send("WHITEPILL");
+
+        this.setState( () => {
+          return {
+            snake: nextSnake,
+            pill: choosePill(nextSnake),
+          }
+        });
       } else {
         cloneSnake.pop();
-        return {
-          snake: [next].concat(cloneSnake),
-        }
+        this.setState( () => {
+          return {
+            snake: [next].concat(cloneSnake),
+          }
+        });
       }
-    });
+  
   }
 
   handleKey(key) {

@@ -8,7 +8,6 @@ import (
 	"math/rand"
 	"net/http"
 	"strings"
-	"time"
 )
 
 var upgrader = websocket.Upgrader{
@@ -20,14 +19,14 @@ var lyrics []string
 
 func reader(conn *websocket.Conn) {
 	// write random post malone psycho lyrics to client
-	go func() {
+	/*go func() {
 		for {
 			idx := rand.Intn(len(lyrics))
 			conn.WriteMessage(1, []byte(lyrics[idx]))
 			time.Sleep(1 * time.Second)
 		}
 
-	}()
+	}()*/
 	for {
 		messageType, p, err := conn.ReadMessage()
 		if err != nil {
@@ -35,12 +34,19 @@ func reader(conn *websocket.Conn) {
 			return
 		}
 
+		if string(p) != "WHITEPILL" {
+			continue
+		}
+
 		log.Println(string(p))
 
-		if err := conn.WriteMessage(messageType, p); err != nil {
+		idx := rand.Intn(len(lyrics))
+		err = conn.WriteMessage(messageType, []byte(lyrics[idx]))
+		if err != nil {
 			log.Println(err)
 			return
 		}
+
 	}
 }
 
