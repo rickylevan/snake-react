@@ -136,6 +136,11 @@ class App extends React.Component {
 
 
   tick() {
+    // do the random fuzz EVEN AFTER client pwned loses snake game
+    this.setState(() => {
+      return {grid:  getGreyGrid(numBlocks)}
+    })
+
     // do nothing if we've already lost
     if (this.state.fail) {
       return;
@@ -222,7 +227,7 @@ class App extends React.Component {
               return (<div ikey={i} key={i} style={{display: 'flex'}}> 
                 {row.map((val, j) => {
                   return <div jkey={j} key={j} style={
-                    {'height': '20px', 'width': '20px', background: (
+                    {'height': '1px', 'width': '1px', background: (
                       /* mirror flip here, & j off by numBlocks */
                       getBlockColor(j-numBlocks, i, val, 
                         this.state.snake, this.state.pill, this.state.fail))}}>
