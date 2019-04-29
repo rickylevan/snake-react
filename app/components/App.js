@@ -16,7 +16,8 @@ function getGreyGrid(numBlocks) {
     for (let i = 0; i < numBlocks; i++) {
       const next = new Array(numBlocks)
       for (let j = 0; j < numBlocks; j++) {
-        next.push(Math.floor(Math.random()*256));
+        //next.push(Math.floor(Math.random()*256));
+        next.push(200);
       }
       squareShades.push(next);
     }
@@ -33,6 +34,8 @@ function blockInSnake(i, j, snake) {
 }
 
 function choosePill(snake) {
+  //hax
+  return [0,0];
 outerLoop:
   while (true) {
     const x = Math.floor(Math.random() * numBlocks);
@@ -79,17 +82,30 @@ class App extends React.Component {
       pill: choosePill(initSnake),
       fail: false,
       dir: "ArrowRight",
-      malone: ""
+      malone: "",
+      cursor: null // OOhh yess the null case really matters here, 
+      // horrible if it just starts at [0,0] or some shit while the mouse is off the file display.
     };
 
     this.tick = this.tick.bind(this);
     this.handleKey = this.handleKey.bind(this);
     this.initWebSocket = this.initWebSocket.bind(this);
+    this.updateCursor = this.updateCursor.bind(this);
 
     // refs for the win to autofocus the game, instead of having to click
     // into the div for enable keystrokes
     this.myRef = React.createRef();
     this.applyFocus = this.applyFocus.bind(this);
+  }
+
+  updateCursor(x, y) {
+    this.setState( () => {
+      // blergh forgot to have to return inside here, all the petty little things you have to keep track of!
+      return {
+        cursor: [x, y]
+      }
+    })
+    //console.log('cursor updated to:', [x,y]);
   }
 
 
@@ -136,6 +152,11 @@ class App extends React.Component {
 
 
   tick() {
+
+    // easy hack
+    return;
+
+
     // do the random fuzz EVEN AFTER client pwned loses snake game
     this.setState(() => {
       return {grid:  getGreyGrid(numBlocks)}
@@ -224,13 +245,19 @@ class App extends React.Component {
         tabIndex={-1} onKeyDown={this.handleKey} autoFocus="true">    
        <div> 
             {this.state.grid.map((row, i) => {
-              return (<div ikey={i} key={i} style={{display: 'flex'}}> 
+              return (<div 
+                ikey={i} key={i} style={{display: 'flex'}}> 
                 {row.map((val, j) => {
-                  return <div jkey={j} key={j} style={
-                    {'height': '1px', 'width': '1px', background: (
+                  return <div onMouseEnter={() => {this.updateCursor(j-numBlocks, i);}} jkey={j} key={j} style={
+                    {'cursor': 'default', 'height': '20px', 'width': '20px', 'background': (
                       /* mirror flip here, & j off by numBlocks */
                       getBlockColor(j-numBlocks, i, val, 
-                        this.state.snake, this.state.pill, this.state.fail))}}>
+                        this.state.snake, this.state.pill, this.state.fail, this.state.cursor)),
+                    'textAlign': 'center', 'verticalAlign': 'middle',
+                    'lineHeight': '20px'
+                  }}
+                    >
+                    {i == (j-numBlocks) ? '~' : '0'}
                 </div>})}
               </div>);
             })}
@@ -243,7 +270,19 @@ class App extends React.Component {
 
 }
 
-function getBlockColor(i, j, gridVal, snake, pill, fail) {
+function getBlockColor(i, j, gridVal, snake, pill, fail, cursor) {
+  // let cursor take top priority
+
+  // and cursor can only possibly apply if it has become non-null
+  if (cursor != null) {
+    ///console.log('cursor non null, is:', cursor);
+    if (i == cursor[0] && j == cursor[1]) {
+      return 'rgb(204,255,0)';
+    }
+  } else {
+    //console.log('HA, null cursor');
+  }
+
   if (blockInSnake(i, j, snake)) {
     if (fail) {
       return 'rgb(150,30,30)';
